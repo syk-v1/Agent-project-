@@ -257,7 +257,7 @@ function addProposal(ev) {
     <div class="answer"></div>
     <div class="debate hidden"></div>
     <div class="tally-badge hidden"><span class="n"></span><span class="bar"><i></i></span></div>`;
-  card.querySelector(".answer").textContent = ev.answer;
+  card.querySelector(".answer").innerHTML = renderMarkdown(ev.answer);
   $("#stelae").append(card);
 }
 
@@ -267,10 +267,7 @@ function addDebate(ev) {
   if (!card) return;
   const box = card.querySelector(".debate");
   box.classList.remove("hidden");
-  box.innerHTML = `<span class="lbl">In debate</span>`;
-  const p = document.createElement("span");
-  p.textContent = ev.critique;
-  box.append(p);
+  box.innerHTML = `<span class="lbl">In debate</span><div class="prose">${renderMarkdown(ev.critique)}</div>`;
 }
 
 function addVote(ev) {
@@ -375,6 +372,56 @@ function logError(msg) {
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+/* Minimal, dependency-free, XSS-safe markdown -> HTML.
+   Input is escaped FIRST, so model text can never inject live tags; only the
+   markup we add below becomes real HTML. Handles the subset models actually
+   emit: headings, bold, italics, inline code, and unordered/ordered lists. */
+function inlineMd(text) {
+  return text
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/__([^_]+)__/g, "<strong>$1</strong>")
+    .replace(/(^|[^*])\*(?!\s)([^*]+?)\*(?!\*)/g, "$1<em>$2</em>")
+    .replace(/(^|[^_])_(?!\s)([^_]+?)_(?!_)/g, "$1<em>$2</em>");
+}
+
+function renderMarkdown(raw) {
+  const src = escapeHtml(String(raw || "").trim());
+  const lines = src.split(/\r?\n/);
+  const html = [];
+  let list = null;                        // "ul" | "ol" | null
+  const closeList = () => { if (list) { html.push(`</${list}>`); list = null; } };
+
+  let para = [];
+  const flushPara = () => {
+    if (para.length) { html.push(`<p>${inlineMd(para.join(" "))}</p>`); para = []; }
+  };
+
+  for (const line of lines) {
+    const t = line.trim();
+    if (!t) { flushPara(); closeList(); continue; }
+
+    let m;
+    if ((m = t.match(/^#{1,6}\s+(.*)$/))) {          // heading -> styled eyebrow
+      flushPara(); closeList();
+      html.push(`<h4>${inlineMd(m[1])}</h4>`);
+    } else if ((m = t.match(/^[-*•]\s+(.*)$/))) {    // unordered item
+      flushPara();
+      if (list !== "ul") { closeList(); html.push("<ul>"); list = "ul"; }
+      html.push(`<li>${inlineMd(m[1])}</li>`);
+    } else if ((m = t.match(/^\d+[.)]\s+(.*)$/))) {  // ordered item
+      flushPara();
+      if (list !== "ol") { closeList(); html.push("<ol>"); list = "ol"; }
+      html.push(`<li>${inlineMd(m[1])}</li>`);
+    } else {                                         // paragraph text
+      closeList();
+      para.push(t);
+    }
+  }
+  flushPara(); closeList();
+  return html.join("");
 }
 
 loadModels();

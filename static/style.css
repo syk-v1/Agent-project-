@@ -287,11 +287,40 @@ button#convene:disabled { opacity: 0.45; cursor: not-allowed; }
   box-shadow: 0 3px 8px -3px var(--shadow);
 }
 .stele .who { font-family: var(--font-ui); font-size: var(--step--1); color: var(--ink-faint); margin: var(--sp-2) 0 var(--sp-2); text-align: center; overflow-wrap: anywhere; }
-.stele .answer { font-size: var(--step-0); white-space: pre-wrap; overflow-wrap: anywhere; }
+.stele .answer { font-size: var(--step-0); overflow-wrap: anywhere; }
+
+/* rendered prose (answers + debate) */
+.prose, .stele .answer { }
+.stele .answer p, .stele .debate .prose p { margin: 0 0 var(--sp-2); }
+.stele .answer > :first-child, .stele .debate .prose > :first-child { margin-top: 0; }
+.stele .answer > :last-child, .stele .debate .prose > :last-child { margin-bottom: 0; }
+.stele .answer strong, .stele .debate strong { color: var(--bronze); font-weight: 700; }
+.stele .answer em { font-style: italic; }
+.stele .answer code, .stele .debate code {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.88em; background: var(--surface-2);
+  padding: 0.1em 0.4em; border-radius: 3px;
+}
+.stele .answer h4, .stele .debate .prose h4 {
+  font-family: var(--font-ui); font-size: var(--step--1);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--bronze); margin: var(--sp-3) 0 var(--sp-1);
+}
+.stele .answer ul, .stele .answer ol,
+.stele .debate .prose ul, .stele .debate .prose ol {
+  margin: 0 0 var(--sp-2); padding-left: 1.3em;
+}
+.stele .answer li, .stele .debate .prose li { margin: 0.25em 0; padding-left: 0.2em; }
+.stele .answer ul li::marker, .stele .debate .prose ul li::marker { color: var(--bronze); content: "\203A  "; }
+.stele .answer ol li::marker, .stele .debate .prose ol li::marker { color: var(--bronze); font-family: var(--font-ui); }
+.stele .answer > p, .stele .answer > ul, .stele .answer > ol, .stele .answer > h4 {
+  animation: fadeUp 0.5s ease both;
+}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .stele .debate {
   margin-top: var(--sp-3); padding-top: var(--sp-3);
   border-top: 1px dashed var(--line-strong);
-  font-size: var(--step--1); color: var(--ink-soft); white-space: pre-wrap; overflow-wrap: anywhere;
+  font-size: var(--step--1); color: var(--ink-soft); overflow-wrap: anywhere;
 }
 .stele .debate .lbl { display: block; font-family: var(--font-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--verdigris); margin-bottom: var(--sp-1); font-size: var(--step--1); }
 .stele .tally-badge {
