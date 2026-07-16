@@ -1,0 +1,354 @@
+/* ============================================================
+   AI COUNCIL — the Athenian agora
+   Light: "marble at midday"   Dark: "council by torchlight"
+   ============================================================ */
+
+/* ---- Design tokens ---------------------------------------- */
+:root {
+  /* palette — light */
+  --bg:        #E9E4D6;
+  --bg-veil:   #E2DCCB;
+  --surface:   #F3EFE4;
+  --surface-2: #DED7C4;
+  --ink:       #23241F;
+  --ink-soft:  #55564C;
+  --ink-faint: #7C7C6F;
+  --bronze:    #9C7A33;
+  --bronze-lt: #C9A34A;
+  --verdigris: #2F6E66;
+  --verdigris-lt: #4C948B;
+  --oxblood:   #8F3B24;
+  --line:      rgba(35, 36, 31, 0.16);
+  --line-strong: rgba(35, 36, 31, 0.30);
+  --shadow:    rgba(35, 30, 15, 0.18);
+  --glow:      rgba(201, 163, 74, 0.55);
+
+  /* type */
+  --font-display: "Optima", "Candara", "Gill Sans", "Gill Sans MT", "Segoe UI", sans-serif;
+  --font-body: "Palatino Linotype", "Book Antiqua", Palatino, "URW Palladio L", Georgia, serif;
+  --font-ui: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --step--1: clamp(0.78rem, 0.76rem + 0.1vw, 0.84rem);
+  --step-0:  1rem;
+  --step-1:  1.2rem;
+  --step-2:  1.5rem;
+  --step-3:  clamp(1.7rem, 1.4rem + 1.4vw, 2.3rem);
+  --step-4:  clamp(2.4rem, 1.8rem + 3vw, 4rem);
+
+  /* space */
+  --sp-1: 0.4rem;
+  --sp-2: 0.8rem;
+  --sp-3: 1.2rem;
+  --sp-4: 1.8rem;
+  --sp-5: 2.8rem;
+  --radius: 3px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:        #171611;
+    --bg-veil:   #12110B;
+    --surface:   #211F16;
+    --surface-2: #14130C;
+    --ink:       #ECE6D4;
+    --ink-soft:  #B4AC94;
+    --ink-faint: #8A836E;
+    --bronze:    #CBA24C;
+    --bronze-lt: #E6C36B;
+    --verdigris: #4F9E92;
+    --verdigris-lt: #6FC0B4;
+    --oxblood:   #CE7048;
+    --line:      rgba(236, 230, 212, 0.14);
+    --line-strong: rgba(236, 230, 212, 0.28);
+    --shadow:    rgba(0, 0, 0, 0.5);
+    --glow:      rgba(230, 195, 107, 0.6);
+  }
+}
+/* explicit toggle wins over the media query, both directions */
+:root[data-theme="light"] {
+  --bg:#E9E4D6; --bg-veil:#E2DCCB; --surface:#F3EFE4; --surface-2:#DED7C4;
+  --ink:#23241F; --ink-soft:#55564C; --ink-faint:#7C7C6F;
+  --bronze:#9C7A33; --bronze-lt:#C9A34A; --verdigris:#2F6E66; --verdigris-lt:#4C948B;
+  --oxblood:#8F3B24; --line:rgba(35,36,31,0.16); --line-strong:rgba(35,36,31,0.30);
+  --shadow:rgba(35,30,15,0.18); --glow:rgba(201,163,74,0.55);
+}
+:root[data-theme="dark"] {
+  --bg:#171611; --bg-veil:#12110B; --surface:#211F16; --surface-2:#14130C;
+  --ink:#ECE6D4; --ink-soft:#B4AC94; --ink-faint:#8A836E;
+  --bronze:#CBA24C; --bronze-lt:#E6C36B; --verdigris:#4F9E92; --verdigris-lt:#6FC0B4;
+  --oxblood:#CE7048; --line:rgba(236,230,212,0.14); --line-strong:rgba(236,230,212,0.28);
+  --shadow:rgba(0,0,0,0.5); --glow:rgba(230,195,107,0.6);
+}
+
+/* ---- base ------------------------------------------------- */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  color: var(--ink);
+  background-color: var(--bg);
+  /* subtle marble veining, drawn with layered gradients (no images) */
+  background-image:
+    radial-gradient(120% 80% at 15% -10%, var(--surface) 0%, transparent 46%),
+    radial-gradient(120% 90% at 100% 0%, var(--bg-veil) 0%, transparent 40%),
+    repeating-linear-gradient(115deg, transparent 0 38px, rgba(120,110,80,0.03) 38px 39px);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 var(--sp-3) var(--sp-5); }
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; }
+
+.eyebrow {
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--bronze);
+  margin: 0 0 var(--sp-1);
+}
+
+a { color: var(--verdigris); }
+
+/* ---- theme toggle ----------------------------------------- */
+.toggle {
+  position: fixed; top: 14px; right: 14px; z-index: 20;
+  font-family: var(--font-ui); font-size: var(--step--1);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-soft); background: var(--surface);
+  border: 1px solid var(--line-strong); border-radius: 999px;
+  padding: 0.4em 0.9em; cursor: pointer;
+}
+.toggle:hover { color: var(--bronze); border-color: var(--bronze); }
+
+/* ---- pediment header -------------------------------------- */
+.pediment { text-align: center; padding: var(--sp-5) 0 var(--sp-4); }
+
+/* the temple gable, drawn as a bronze-outlined triangle */
+.pediment .gable {
+  width: min(280px, 70%);
+  height: 46px;
+  margin: 0 auto var(--sp-2);
+  border-top: 2px solid var(--bronze);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  background:
+    linear-gradient(180deg, var(--glow) 0%, transparent 80%);
+  opacity: 0.9;
+}
+/* fluted column rule under the columns row */
+.pediment .columns {
+  height: 30px;
+  background-image: repeating-linear-gradient(90deg,
+    var(--line-strong) 0 1px, transparent 1px 9px);
+  border-bottom: 2px solid var(--bronze);
+  width: min(280px, 70%); margin: 0 auto;
+  opacity: 0.7;
+}
+
+.title {
+  font-size: var(--step-4);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: var(--sp-3) 0 var(--sp-1);
+  line-height: 1.05;
+}
+.subtitle {
+  font-family: var(--font-ui);
+  font-size: var(--step-0);
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  margin: 0 auto;
+  max-width: 60ch;
+}
+
+/* ---- section chrome --------------------------------------- */
+.chamber { margin-top: var(--sp-5); }
+.chamber > header { display: flex; align-items: baseline; gap: var(--sp-2); margin-bottom: var(--sp-3); }
+.chamber h2 { font-size: var(--step-2); letter-spacing: 0.06em; margin: 0; text-transform: uppercase; }
+.chamber .greek { font-style: italic; color: var(--ink-faint); font-family: var(--font-body); font-size: var(--step-0); }
+.rule { height: 2px; background: linear-gradient(90deg, var(--bronze), transparent); margin-top: 2px; flex: 1; }
+
+/* ---- the podium (question + rosters) ---------------------- */
+.podium {
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-top: 3px solid var(--bronze);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 30px -18px var(--shadow);
+  padding: var(--sp-4);
+  margin-top: var(--sp-4);
+}
+
+label.field-label {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-soft); margin-bottom: var(--sp-2);
+}
+
+textarea#question {
+  width: 100%; min-height: 96px; resize: vertical;
+  font-family: var(--font-body); font-size: var(--step-1);
+  line-height: 1.5; color: var(--ink);
+  background: var(--bg); border: 1px solid var(--line-strong);
+  border-radius: var(--radius); padding: var(--sp-3);
+}
+textarea#question:focus-visible,
+.roster input:focus-visible + span,
+button:focus-visible {
+  outline: 2px solid var(--bronze); outline-offset: 2px;
+}
+
+/* two roster tablets side by side */
+.rosters { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); margin-top: var(--sp-4); }
+.roster {
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--bg-veil); padding: var(--sp-3); min-width: 0;
+}
+.roster.assembly { border-left: 3px solid var(--bronze); }
+.roster.governing { border-left: 3px solid var(--verdigris); }
+.roster h3 { margin: 0; font-size: var(--step-1); letter-spacing: 0.05em; text-transform: uppercase; }
+.roster .count { font-family: var(--font-ui); font-size: var(--step--1); color: var(--ink-faint); }
+.roster .hint { font-size: var(--step--1); color: var(--ink-faint); margin: 0.2rem 0 var(--sp-2); font-family: var(--font-ui); }
+
+.roster .search {
+  width: 100%; font-family: var(--font-ui); font-size: var(--step--1);
+  padding: 0.45em 0.6em; margin-bottom: var(--sp-2);
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line); border-radius: var(--radius);
+}
+.roster .list {
+  max-height: 220px; overflow-y: auto; overflow-x: hidden;
+  display: flex; flex-direction: column; gap: 2px;
+  border-top: 1px solid var(--line); padding-top: var(--sp-2);
+}
+.roster .opt { display: flex; align-items: center; gap: 0.55em; cursor: pointer; padding: 0.32em 0.4em; border-radius: var(--radius); }
+.roster .opt:hover { background: var(--surface); }
+.roster .opt input { accent-color: var(--bronze); width: 15px; height: 15px; flex: none; }
+.roster.governing .opt input { accent-color: var(--verdigris); }
+.roster .opt .nm { font-family: var(--font-ui); font-size: var(--step--1); line-height: 1.3; min-width: 0; overflow-wrap: anywhere; }
+.roster .opt.disabled { opacity: 0.38; cursor: not-allowed; }
+.roster .opt.disabled input { pointer-events: none; }
+
+/* convene */
+.convene-row { display: flex; align-items: center; gap: var(--sp-3); margin-top: var(--sp-4); flex-wrap: wrap; }
+button#convene {
+  font-family: var(--font-display); font-size: var(--step-1);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--surface); background: var(--bronze);
+  border: none; border-radius: var(--radius);
+  padding: 0.7em 1.8em; cursor: pointer;
+  box-shadow: 0 6px 16px -8px var(--shadow);
+  transition: transform 0.12s ease, background 0.2s ease;
+}
+button#convene:hover:not(:disabled) { background: var(--bronze-lt); transform: translateY(-1px); }
+button#convene:disabled { opacity: 0.45; cursor: not-allowed; }
+.notice { font-family: var(--font-ui); font-size: var(--step--1); color: var(--oxblood); }
+.notice a { color: var(--bronze); }
+
+/* ---- stage indicator -------------------------------------- */
+.stage-banner {
+  display: none; align-items: center; gap: 0.7em;
+  font-family: var(--font-ui); font-size: var(--step--1);
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--verdigris);
+  margin: var(--sp-4) 0 var(--sp-2);
+}
+.stage-banner.on { display: flex; }
+.stage-banner .dots { display: inline-flex; gap: 4px; }
+.stage-banner .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--verdigris); animation: pulse 1.1s infinite ease-in-out; }
+.stage-banner .dots i:nth-child(2) { animation-delay: 0.18s; }
+.stage-banner .dots i:nth-child(3) { animation-delay: 0.36s; }
+@keyframes pulse { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } }
+
+/* ---- proposal stelae -------------------------------------- */
+.stelae { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--sp-3); }
+.stele {
+  background: var(--surface); border: 1px solid var(--line-strong);
+  border-top: 3px solid var(--bronze); border-radius: var(--radius) var(--radius) 0 0;
+  padding: var(--sp-3) var(--sp-3) var(--sp-4);
+  box-shadow: 0 10px 26px -20px var(--shadow);
+  position: relative;
+  animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.stele.win { border-color: var(--bronze); box-shadow: 0 0 0 2px var(--bronze), 0 14px 40px -16px var(--glow); }
+@keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+
+.stele .medallion {
+  position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+  width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-size: var(--step-1); font-weight: 700;
+  color: var(--surface); background: var(--bronze);
+  box-shadow: 0 3px 8px -3px var(--shadow);
+}
+.stele .who { font-family: var(--font-ui); font-size: var(--step--1); color: var(--ink-faint); margin: var(--sp-2) 0 var(--sp-2); text-align: center; overflow-wrap: anywhere; }
+.stele .answer { font-size: var(--step-0); white-space: pre-wrap; overflow-wrap: anywhere; }
+.stele .debate {
+  margin-top: var(--sp-3); padding-top: var(--sp-3);
+  border-top: 1px dashed var(--line-strong);
+  font-size: var(--step--1); color: var(--ink-soft); white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.stele .debate .lbl { display: block; font-family: var(--font-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--verdigris); margin-bottom: var(--sp-1); font-size: var(--step--1); }
+.stele .tally-badge {
+  margin-top: var(--sp-3); font-family: var(--font-ui); font-size: var(--step--1);
+  color: var(--bronze); letter-spacing: 0.08em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 0.5em;
+}
+.stele .bar { height: 6px; background: var(--surface-2); border-radius: 3px; flex: 1; overflow: hidden; }
+.stele .bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--bronze), var(--bronze-lt)); transition: width 0.8s cubic-bezier(0.2,0.7,0.2,1); }
+
+/* ---- governing bench / ostraka ---------------------------- */
+.bench { display: flex; flex-wrap: wrap; gap: var(--sp-3); }
+.seat {
+  flex: 1 1 220px; min-width: 0;
+  background: var(--surface); border: 1px solid var(--line);
+  border-left: 3px solid var(--verdigris); border-radius: var(--radius);
+  padding: var(--sp-3); animation: rise 0.5s ease both;
+}
+.seat .judge { font-family: var(--font-ui); font-size: var(--step--1); color: var(--ink-faint); overflow-wrap: anywhere; }
+.seat .cast { display: flex; align-items: center; gap: 0.6em; margin: var(--sp-2) 0; }
+.ostrakon {
+  width: 34px; height: 34px; display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 700; font-size: var(--step-1);
+  color: var(--surface); background: var(--verdigris);
+  clip-path: polygon(12% 4%, 96% 0, 100% 82%, 78% 100%, 6% 92%, 0 28%);
+  animation: drop 0.5s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+.ostrakon.abstain { background: var(--oxblood); font-size: var(--step-0); }
+@keyframes drop { from { opacity: 0; transform: translateY(-16px) rotate(-12deg); } to { opacity: 1; transform: none; } }
+.seat .reason { font-size: var(--step--1); color: var(--ink-soft); font-style: italic; overflow-wrap: anywhere; }
+
+/* ---- verdict ---------------------------------------------- */
+.verdict { text-align: center; margin-top: var(--sp-5); }
+.verdict .laurel { width: 220px; height: 140px; margin: 0 auto var(--sp-2); filter: drop-shadow(0 0 10px var(--glow)); animation: wreath 0.7s cubic-bezier(0.2, 0.9, 0.2, 1) both; }
+@keyframes wreath { from { opacity: 0; transform: scale(0.82); } to { opacity: 1; transform: none; } }
+.verdict .stamp { font-family: var(--font-display); font-size: var(--step-2); letter-spacing: 0.12em; text-transform: uppercase; color: var(--bronze); }
+.verdict .decree { font-family: var(--font-ui); font-size: var(--step--1); color: var(--ink-soft); letter-spacing: 0.06em; margin-top: var(--sp-1); }
+.verdict.unratified .stamp { color: var(--oxblood); }
+
+/* ---- errors ----------------------------------------------- */
+.err-log { margin-top: var(--sp-3); display: flex; flex-direction: column; gap: var(--sp-1); }
+.err {
+  font-family: var(--font-ui); font-size: var(--step--1); color: var(--oxblood);
+  background: color-mix(in srgb, var(--oxblood) 10%, transparent);
+  border-left: 2px solid var(--oxblood); padding: 0.4em 0.7em; border-radius: 2px;
+  overflow-wrap: anywhere;
+}
+
+.hidden { display: none !important; }
+
+/* ---- responsive ------------------------------------------- */
+@media (max-width: 680px) {
+  .rosters { grid-template-columns: 1fr; }
+}
+
+/* ---- reduced motion --------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .stele .bar > i { transition: none; }
+}

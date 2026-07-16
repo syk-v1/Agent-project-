@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Council — an assembly of free minds</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%8F%9B%EF%B8%8F%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <button class="toggle" id="theme-toggle" type="button" aria-label="Switch light or dark theme">Torchlight</button>
+
+  <div class="wrap">
+    <header class="pediment">
+      <div class="gable" aria-hidden="true"></div>
+      <div class="columns" aria-hidden="true"></div>
+      <p class="eyebrow">Ekklesia &amp; Boule</p>
+      <h1 class="title">The AI Council</h1>
+      <p class="subtitle">
+        Pose a question to an assembly of free AI models. They each propose an answer,
+        debate one another, and a separate governing body of judges votes to ratify the
+        strongest proposal — in the spirit of Athenian democracy.
+      </p>
+    </header>
+
+    <!-- ------- Podium: question + rosters ------- -->
+    <main>
+      <section class="podium" aria-label="Convene a council">
+        <label class="field-label" for="question">The matter before the council</label>
+        <textarea id="question" placeholder="e.g. What is the fairest way to design a voting system?"></textarea>
+
+        <div class="rosters">
+          <div class="roster assembly">
+            <h3>The Assembly</h3>
+            <span class="count" id="assembly-count">0 selected</span>
+            <p class="hint">Debaters — each proposes an answer, then argues. Pick 2 or more.</p>
+            <input class="search" id="assembly-search" type="search" placeholder="Filter models…" aria-label="Filter assembly models" />
+            <div class="list" id="assembly-list" role="group" aria-label="Assembly models"></div>
+          </div>
+
+          <div class="roster governing">
+            <h3>The Governing Body</h3>
+            <span class="count" id="governing-count">0 selected</span>
+            <p class="hint">Judges — read the debate and vote. Best chosen from different models.</p>
+            <input class="search" id="governing-search" type="search" placeholder="Filter models…" aria-label="Filter governing models" />
+            <div class="list" id="governing-list" role="group" aria-label="Governing body models"></div>
+          </div>
+        </div>
+
+        <div class="convene-row">
+          <button id="convene" type="button" disabled>Convene the Council</button>
+          <span class="notice" id="notice"></span>
+        </div>
+      </section>
+
+      <!-- ------- Live proceedings ------- -->
+      <div class="stage-banner" id="stage-banner">
+        <span id="stage-text">The assembly gathers</span>
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      </div>
+
+      <section class="chamber hidden" id="assembly-chamber">
+        <header><h2>The Assembly</h2><span class="greek">the debaters propose</span><span class="rule"></span></header>
+        <div class="stelae" id="stelae"></div>
+      </section>
+
+      <section class="chamber hidden" id="governing-chamber">
+        <header><h2>The Governing Body</h2><span class="greek">the judges cast their ostraka</span><span class="rule"></span></header>
+        <div class="bench" id="bench"></div>
+      </section>
+
+      <section class="chamber hidden" id="verdict-chamber">
+        <div class="verdict" id="verdict"></div>
+      </section>
+
+      <div class="err-log" id="err-log"></div>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
