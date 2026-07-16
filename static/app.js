@@ -36,6 +36,37 @@ const state = {
   });
 })();
 
+/* ---------- Owl of Athena companion ---------- */
+const owl = (() => {
+  const el = $("#owl");
+  const bubble = $("#owl-bubble");
+  const MOODS = ["is-watching", "is-listening", "is-celebrate", "is-concerned"];
+  let hideT;
+  const HOOTS = ["Hoo goes there?", "Athena watches with me.", "A wise question sharpens the mind.", "Hoo!"];
+
+  function say(text, ms = 3400) {
+    if (!bubble) return;
+    bubble.textContent = text;
+    bubble.classList.add("show");
+    clearTimeout(hideT);
+    hideT = setTimeout(() => bubble.classList.remove("show"), ms);
+  }
+  function setMood(mood, text) {
+    if (!el) return;
+    el.classList.remove(...MOODS);
+    if (mood) el.classList.add("is-" + mood);
+    if (text) say(text);
+  }
+  if (el) {
+    el.addEventListener("click", () => {
+      el.classList.add("ruffle");
+      setTimeout(() => el.classList.remove("ruffle"), 700);
+      say(HOOTS[Math.floor(Math.random() * HOOTS.length)]);
+    });
+  }
+  return { say, setMood };
+})();
+
 /* ---------- model loading ---------- */
 async function loadModels() {
   const notice = $("#notice");
@@ -58,6 +89,7 @@ async function loadModels() {
     renderRoster("assembly");
     renderRoster("governing");
     updateControls();
+    setTimeout(() => owl.say("I am Athena's owl. Pose a question, and I shall watch the council decide.", 5200), 700);
   } catch (err) {
     notice.textContent = "Could not reach the server to load models.";
   }
@@ -218,10 +250,18 @@ async function consumeStream(stream) {
   }
 }
 
+const OWL_STAGE = {
+  proposals: ["watching", "The Assembly rises to speak…"],
+  debate: ["listening", "Hoo — let them debate."],
+  vote: ["watching", "The judges weigh every word…"],
+};
+
 function setStage(name) {
   const banner = $("#stage-banner");
   banner.classList.add("on");
   $("#stage-text").textContent = STAGE_TEXT[name] || "The council convenes";
+  const mood = OWL_STAGE[name];
+  if (mood) owl.setMood(mood[0], mood[1]);
 }
 
 function handleEvent(ev) {
@@ -231,8 +271,8 @@ function handleEvent(ev) {
     case "debate": addDebate(ev); break;
     case "vote": addVote(ev); break;
     case "result": showResult(ev); break;
-    case "model_error": logError(`${short(ev.model)} withdrew during ${ev.stage}: ${ev.message}`); break;
-    case "aborted": logError(ev.message); break;
+    case "model_error": logError(cleanMessage(ev.message) || `${short(ev.model)} withdrew during ${ev.stage}.`); break;
+    case "aborted": logError(ev.message); owl.setMood("concerned", "The council could not reach a verdict."); break;
     case "done": break;
   }
 }
@@ -262,12 +302,31 @@ function addProposal(ev) {
 }
 
 function addDebate(ev) {
-  const label = state.labelByModel.get(ev.model);
+  const label = ev.label || state.labelByModel.get(ev.model);
   const card = label && $(`#stele-${label}`);
   if (!card) return;
   const box = card.querySelector(".debate");
   box.classList.remove("hidden");
-  box.innerHTML = `<span class="lbl">In debate</span><div class="prose">${renderMarkdown(ev.critique)}</div>`;
+  const labels = state.proposals.map((p) => p.label);
+  const body = highlightLabels(renderMarkdown(ev.critique), labels);
+  box.innerHTML =
+    `<span class="lbl">Councillor ${label} critiques the others</span>` +
+    `<div class="prose">${body}</div>`;
+}
+
+/* wrap references like "Answer B" in a bronze chip so it's clear who is
+   being critiqued. Only wraps letters that are actually in play. */
+function highlightLabels(html, labels) {
+  return html.replace(/\bAnswer\s+([A-Z])\b/g, (m, L) =>
+    labels.includes(L) ? `<span class="ref">Answer ${L}</span>` : m);
+}
+
+/* strip any raw provider JSON from an error string for a tidy message */
+function cleanMessage(msg) {
+  let s = String(msg || "");
+  const brace = s.indexOf("{");
+  if (brace !== -1) s = s.slice(0, brace);
+  return s.replace(/\s+/g, " ").trim().replace(/[:\-–—]\s*$/, "");
 }
 
 function addVote(ev) {
@@ -318,6 +377,9 @@ function showResult(ev) {
     ? `Championed by ${name} · ${ev.total_votes} vote${ev.total_votes === 1 ? "" : "s"} cast`
     : `The governing body cast no valid votes; Answer ${ev.winner_label} stands by precedence.`;
   v.append(stamp, decree);
+
+  if (ev.ratified) owl.setMood("celebrate", `Hoo hoo! Answer ${ev.winner_label} is crowned!`);
+  else owl.setMood("concerned", "No clear verdict this time…");
 }
 
 /* laurel wreath — two stems of leaves rising from the base, open at the top.

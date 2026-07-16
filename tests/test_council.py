@@ -87,6 +87,11 @@ async def test_happy_path_labels_votes_and_winner():
     assert [p["label"] for p in proposals] == ["A", "B", "C"]
     assert proposals[0]["model"] == "model/alpha"
 
+    # Each debate contribution is tagged with its speaker's answer label.
+    debates = _events_of(events, "debate")
+    assert {d["label"] for d in debates} <= {"A", "B", "C"}
+    assert all("label" in d and d["label"] for d in debates)
+
     # Only governing models cast votes.
     votes = _events_of(events, "vote")
     assert {v["judge"] for v in votes} == set(GOVERNING)

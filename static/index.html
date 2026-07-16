@@ -8,6 +8,50 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%8F%9B%EF%B8%8F%3C/text%3E%3C/svg%3E" />
 </head>
 <body>
+  <!-- Decorative Athens scene framing the page (purely ambient) -->
+  <div class="scene scene-left" aria-hidden="true">
+    <span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span>
+    <svg class="olive" viewBox="0 0 120 210" fill="none">
+      <path class="olive-stem" d="M60 0 C50 60 66 120 40 200" stroke="var(--verdigris)" stroke-width="3" stroke-linecap="round"/>
+      <g fill="var(--verdigris)">
+        <ellipse cx="46" cy="46" rx="12" ry="4.6" transform="rotate(-38 46 46)"/>
+        <ellipse cx="72" cy="66" rx="12" ry="4.6" transform="rotate(28 72 66)"/>
+        <ellipse cx="48" cy="92" rx="12" ry="4.6" transform="rotate(-32 48 92)"/>
+        <ellipse cx="70" cy="118" rx="12" ry="4.6" transform="rotate(30 70 118)"/>
+        <ellipse cx="44" cy="146" rx="11" ry="4.4" transform="rotate(-30 44 146)"/>
+        <circle cx="60" cy="60" r="3.4" fill="var(--bronze)"/>
+        <circle cx="58" cy="104" r="3.4" fill="var(--bronze)"/>
+      </g>
+    </svg>
+    <svg class="temple" viewBox="0 0 200 150" fill="var(--silhouette)">
+      <polygon points="16,44 100,6 184,44"/>
+      <rect x="14" y="44" width="172" height="12"/>
+      <rect x="22" y="56" width="12" height="66"/>
+      <rect x="52" y="56" width="12" height="66"/>
+      <rect x="82" y="56" width="12" height="66"/>
+      <rect x="106" y="56" width="12" height="66"/>
+      <rect x="136" y="56" width="12" height="66"/>
+      <rect x="166" y="56" width="12" height="66"/>
+      <rect x="6" y="122" width="188" height="10"/>
+      <rect x="0" y="132" width="200" height="10"/>
+    </svg>
+  </div>
+  <div class="scene scene-right" aria-hidden="true">
+    <span class="cloud c2"></span><span class="cloud c3"></span><span class="cloud c1"></span>
+    <svg class="temple" viewBox="0 0 200 150" fill="var(--silhouette)">
+      <polygon points="16,44 100,6 184,44"/>
+      <rect x="14" y="44" width="172" height="12"/>
+      <rect x="22" y="56" width="12" height="66"/>
+      <rect x="52" y="56" width="12" height="66"/>
+      <rect x="82" y="56" width="12" height="66"/>
+      <rect x="106" y="56" width="12" height="66"/>
+      <rect x="136" y="56" width="12" height="66"/>
+      <rect x="166" y="56" width="12" height="66"/>
+      <rect x="6" y="122" width="188" height="10"/>
+      <rect x="0" y="132" width="200" height="10"/>
+    </svg>
+  </div>
+
   <button class="toggle" id="theme-toggle" type="button" aria-label="Switch light or dark theme">Torchlight</button>
 
   <div class="wrap">
@@ -75,6 +119,37 @@
 
       <div class="err-log" id="err-log"></div>
     </main>
+  </div>
+
+  <!-- The Owl of Athena — a small companion that watches the council -->
+  <div class="owl" id="owl" role="img" aria-label="The Owl of Athena, your companion" title="The Owl of Athena">
+    <div class="owl-bubble" id="owl-bubble"></div>
+    <svg viewBox="0 0 100 122">
+      <rect class="perch" x="12" y="108" width="76" height="6" rx="3"/>
+      <g class="owl-body">
+        <ellipse class="wing wing-l" cx="24" cy="70" rx="12" ry="24"/>
+        <ellipse class="wing wing-r" cx="76" cy="70" rx="12" ry="24"/>
+        <ellipse class="belly" cx="50" cy="72" rx="30" ry="36"/>
+        <path class="tuft" d="M28 40 L34 20 L44 36 Z"/>
+        <path class="tuft" d="M72 40 L66 20 L56 36 Z"/>
+        <g class="owl-head">
+          <ellipse class="disc" cx="50" cy="50" rx="27" ry="24"/>
+          <g class="eye">
+            <circle class="white" cx="38" cy="48" r="11"/>
+            <circle class="pupil" cx="38" cy="48" r="5"/>
+            <rect class="lid" x="27" y="37" width="22" height="12" rx="2"/>
+          </g>
+          <g class="eye">
+            <circle class="white" cx="62" cy="48" r="11"/>
+            <circle class="pupil" cx="62" cy="48" r="5"/>
+            <rect class="lid" x="51" y="37" width="22" height="12" rx="2"/>
+          </g>
+          <polygon class="beak" points="50,54 45,60 55,60"/>
+        </g>
+        <path class="foot" d="M42 106 l0 4 M46 106 l0 4 M50 106 l0 4" stroke-width="2"/>
+        <path class="foot" d="M50 106 l0 4 M54 106 l0 4 M58 106 l0 4" stroke-width="2"/>
+      </g>
+    </svg>
   </div>
 
   <script src="/static/app.js"></script>

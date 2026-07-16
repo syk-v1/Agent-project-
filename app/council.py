@@ -36,8 +36,8 @@ def _answers_block(proposals: list[dict]) -> str:
 def _debate_block(debates: list[dict]) -> str:
     if not debates:
         return "(no debate contributions)"
-    return "\n\n".join(f"Assembly member {i + 1} argued:\n{d['critique']}"
-                       for i, d in enumerate(debates))
+    return "\n\n".join(f"The author of Answer {d['label']} argued:\n{d['critique']}"
+                       for d in debates)
 
 
 def parse_vote(text: str, valid_labels: set[str]) -> str | None:
@@ -92,14 +92,14 @@ async def run_council(
     # ---- Round 2: Assembly debates --------------------------------------
     yield {"type": "stage", "name": "debate"}
     debate_results = await asyncio.gather(
-        *(_safe_chat(chat, p["model"], prompts.debate_messages(question, answers_block))
+        *(_safe_chat(chat, p["model"], prompts.debate_messages(question, answers_block, p["label"]))
           for p in proposals)
     )
     debates: list[dict] = []
     for p, (ok, text) in zip(proposals, debate_results):
         if ok:
-            debates.append({"model": p["model"], "critique": text.strip()})
-            yield {"type": "debate", "model": p["model"], "critique": text.strip()}
+            debates.append({"model": p["model"], "label": p["label"], "critique": text.strip()})
+            yield {"type": "debate", "model": p["model"], "label": p["label"], "critique": text.strip()}
         else:
             yield {"type": "model_error", "stage": "debate", "model": p["model"], "message": text}
 

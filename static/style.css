@@ -80,6 +80,14 @@
   --shadow:rgba(0,0,0,0.5); --glow:rgba(230,195,107,0.6);
 }
 
+/* scene tokens (kept together so precedence is easy to reason about) */
+:root { --silhouette: rgba(60, 52, 30, 0.13); --cloud: rgba(255, 255, 255, 0.55); --stars: transparent; }
+@media (prefers-color-scheme: dark) {
+  :root { --silhouette: rgba(0, 0, 0, 0.34); --cloud: rgba(230, 220, 190, 0.10); --stars: rgba(230, 215, 170, 0.5); }
+}
+:root[data-theme="light"] { --silhouette: rgba(60, 52, 30, 0.13); --cloud: rgba(255, 255, 255, 0.55); --stars: transparent; }
+:root[data-theme="dark"] { --silhouette: rgba(0, 0, 0, 0.34); --cloud: rgba(230, 220, 190, 0.10); --stars: rgba(230, 215, 170, 0.5); }
+
 /* ---- base ------------------------------------------------- */
 * { box-sizing: border-box; }
 
@@ -99,7 +107,49 @@ body {
   min-height: 100vh;
 }
 
-.wrap { max-width: 1080px; margin: 0 auto; padding: 0 var(--sp-3) var(--sp-5); }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 var(--sp-3) var(--sp-5); position: relative; z-index: 1; }
+
+/* ---- Athens ambient scene --------------------------------- */
+.scene {
+  position: fixed; top: 0; bottom: 0; z-index: 0;
+  width: clamp(150px, 15vw, 240px); overflow: hidden;
+  pointer-events: none; user-select: none;
+  background-image: radial-gradient(1px 1px at 30% 20%, var(--stars) 50%, transparent 51%),
+                    radial-gradient(1px 1px at 60% 40%, var(--stars) 50%, transparent 51%),
+                    radial-gradient(1px 1px at 45% 12%, var(--stars) 50%, transparent 51%),
+                    radial-gradient(1px 1px at 75% 26%, var(--stars) 50%, transparent 51%);
+}
+.scene-left { left: 0; }
+.scene-right { right: 0; transform: scaleX(-1); }
+
+.scene .temple {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: min(78%, 200px); height: auto;
+}
+.scene .olive {
+  position: absolute; top: -14px; left: 8%; width: 88px; height: auto;
+  transform-origin: 60px 4px;
+  animation: sway 7s ease-in-out infinite;
+}
+.scene .cloud {
+  position: absolute; height: 22px; border-radius: 999px;
+  background: var(--cloud);
+  filter: blur(1px);
+  animation: drift linear infinite;
+}
+.scene .cloud::before, .scene .cloud::after {
+  content: ""; position: absolute; bottom: 0; border-radius: 999px; background: inherit;
+}
+.scene .cloud.c1 { width: 70px; top: 12%; animation-duration: 42s; }
+.scene .cloud.c2 { width: 54px; top: 30%; animation-duration: 55s; animation-delay: -12s; opacity: 0.8; }
+.scene .cloud.c3 { width: 88px; top: 48%; animation-duration: 64s; animation-delay: -30s; opacity: 0.7; }
+.scene .cloud::before { width: 60%; height: 26px; left: 14%; top: -12px; }
+.scene .cloud::after  { width: 40%; height: 20px; right: 16%; top: -8px; }
+
+@keyframes drift { from { transform: translateX(-120px); } to { transform: translateX(280px); } }
+@keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+
+@media (max-width: 1100px) { .scene { display: none; } }
 
 h1, h2, h3 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; }
 
@@ -322,7 +372,12 @@ button#convene:disabled { opacity: 0.45; cursor: not-allowed; }
   border-top: 1px dashed var(--line-strong);
   font-size: var(--step--1); color: var(--ink-soft); overflow-wrap: anywhere;
 }
-.stele .debate .lbl { display: block; font-family: var(--font-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--verdigris); margin-bottom: var(--sp-1); font-size: var(--step--1); }
+.stele .debate .lbl { display: block; font-family: var(--font-ui); letter-spacing: 0.12em; text-transform: uppercase; color: var(--verdigris); margin-bottom: var(--sp-1); font-size: var(--step--1); }
+.stele .debate .ref {
+  font-family: var(--font-ui); font-size: 0.82em; font-weight: 600;
+  color: var(--surface); background: var(--bronze);
+  padding: 0.05em 0.45em; border-radius: 999px; white-space: nowrap;
+}
 .stele .tally-badge {
   margin-top: var(--sp-3); font-family: var(--font-ui); font-size: var(--step--1);
   color: var(--bronze); letter-spacing: 0.08em; text-transform: uppercase;
@@ -370,6 +425,67 @@ button#convene:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 .hidden { display: none !important; }
+
+/* ---- Owl of Athena mascot --------------------------------- */
+.owl {
+  position: fixed; right: 18px; bottom: 16px; z-index: 30;
+  width: 92px; height: auto; cursor: pointer;
+  filter: drop-shadow(0 6px 10px var(--shadow));
+}
+.owl svg { width: 100%; height: auto; display: block; overflow: visible; }
+.owl .belly { fill: var(--bronze); }
+.owl .wing { fill: var(--bronze); filter: brightness(0.88); transform-box: fill-box; transform-origin: 50% 20%; }
+.owl .tuft { fill: var(--bronze); filter: brightness(0.85); }
+.owl .disc { fill: var(--surface); }
+.owl .white { fill: #fbf7ec; }
+.owl .pupil { fill: var(--ink); transform-box: fill-box; transform-origin: center; }
+.owl .lid { fill: var(--bronze); transform-box: fill-box; transform-origin: top; transform: scaleY(0); }
+.owl .beak { fill: var(--bronze-lt); }
+.owl .perch { fill: var(--verdigris); filter: brightness(0.9); }
+.owl .foot { stroke: var(--bronze-lt); fill: none; stroke-linecap: round; }
+.owl .owl-body { transform-box: fill-box; transform-origin: 50% 90%; animation: owl-bob 4.5s ease-in-out infinite; }
+.owl .owl-head { transform-box: fill-box; transform-origin: 50% 78%; }
+.owl .lid { animation: owl-blink 6s infinite; }
+.owl .eye:nth-of-type(3) .lid { animation-delay: 0.06s; }
+
+@keyframes owl-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes owl-blink { 0%, 91%, 100% { transform: scaleY(0); } 94%, 97% { transform: scaleY(1); } }
+
+/* watching — pupils dart, eyes alert */
+.owl.is-watching .pupil { animation: owl-dart 2.6s ease-in-out infinite; }
+@keyframes owl-dart { 0%, 100% { transform: translateX(-2px); } 50% { transform: translateX(2px); } }
+/* listening — head tilts to and fro */
+.owl.is-listening .owl-head { animation: owl-tilt 3.2s ease-in-out infinite; }
+@keyframes owl-tilt { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+/* celebrate — little hops and wing flaps */
+.owl.is-celebrate .owl-body { animation: owl-hop 0.6s ease-in-out 4; }
+.owl.is-celebrate .wing { animation: owl-flap 0.5s ease-in-out 5; }
+@keyframes owl-hop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-12px); } }
+@keyframes owl-flap { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-26deg); } }
+/* concerned — a small worried shrink */
+.owl.is-concerned .owl-head { animation: owl-worry 0.9s ease-in-out 2; }
+@keyframes owl-worry { 0%, 100% { transform: rotate(0) scale(1); } 50% { transform: rotate(-3deg) scale(0.94); } }
+/* click ruffle */
+.owl.ruffle .owl-body { animation: owl-ruffle 0.6s ease; }
+@keyframes owl-ruffle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } }
+
+.owl-bubble {
+  position: absolute; right: 0; bottom: calc(100% + 8px);
+  min-width: 130px; max-width: 210px; width: max-content;
+  font-family: var(--font-ui); font-size: var(--step--1); line-height: 1.35;
+  color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line-strong); border-radius: 10px;
+  padding: 0.55em 0.75em; box-shadow: 0 8px 20px -12px var(--shadow);
+  opacity: 0; transform: translateY(4px) scale(0.96); transform-origin: bottom right;
+  transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none;
+}
+.owl-bubble::after {
+  content: ""; position: absolute; right: 22px; top: 100%;
+  border: 6px solid transparent; border-top-color: var(--surface);
+}
+.owl-bubble.show { opacity: 1; transform: none; }
+
+@media (max-width: 560px) { .owl { width: 68px; right: 10px; bottom: 10px; } }
 
 /* ---- responsive ------------------------------------------- */
 @media (max-width: 680px) {

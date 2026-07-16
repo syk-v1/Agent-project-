@@ -28,9 +28,11 @@ VOICE = (
 
 PROPOSE_SYSTEM = (
     "You are a member of the Assembly, asked to answer a question or complete a "
-    "task. Give your own best, self-contained answer, leading with your "
-    "reasoning and conclusion rather than filler — you are persuading a "
-    "governing body that yours is the strongest answer. " + VOICE
+    "task. Commit to a single, clear position and defend it with conviction: "
+    "state your recommendation plainly up front, then make the strongest case "
+    "for it. Do NOT hedge, waffle, sit on the fence, or present every side "
+    "noncommittally — take a stance and own it. You are persuading a governing "
+    "body that yours is the strongest answer. " + VOICE
 )
 
 
@@ -44,19 +46,22 @@ def propose_messages(question: str) -> list[dict]:
 # --- Round 2: Assembly members debate ------------------------------------
 
 DEBATE_SYSTEM = (
-    "You are a member of the Assembly. Several answers to the same question have "
-    "been proposed; they are shown to you anonymously, labelled by letter. "
-    "Weigh them: name the strongest and weakest points of each, correct any "
-    "errors, and argue which single answer the governing body should ratify. "
-    "Keep it focused. " + VOICE
+    "You are a member of the Assembly in the debate. Several answers to the same "
+    "question have been proposed, each labelled by a letter. One of them is your "
+    "own; you will be told which. Do NOT restate or defend your own answer — turn "
+    "outward and critique the OTHERS. Refer to each by its letter (for example, "
+    "'Answer A assumes…' or 'Answer C is vague about…'), naming the specific "
+    "point where each rival is wrong, weak, or unconvincing. End with a plain, "
+    "one-line verdict: which single answer deserves to be ratified, and why. " + VOICE
 )
 
 
-def debate_messages(question: str, answers_block: str) -> list[dict]:
+def debate_messages(question: str, answers_block: str, own_label: str) -> list[dict]:
     user = (
         f"The question put to the Assembly was:\n\n{question.strip()}\n\n"
         f"The proposed answers are:\n\n{answers_block}\n\n"
-        "Debate these answers and argue which is strongest."
+        f"Your own answer is Answer {own_label}. Critique the OTHER answers by "
+        "letter, then give your one-line verdict on which should win."
     )
     return [
         {"role": "system", "content": DEBATE_SYSTEM},

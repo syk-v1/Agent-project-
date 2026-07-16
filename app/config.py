@@ -18,7 +18,7 @@ class ConfigError(RuntimeError):
 @dataclass(frozen=True)
 class Settings:
     openrouter_api_key: str
-    max_concurrency: int = 3
+    max_concurrency: int = 2
     timeout: float = 90.0
     app_url: str = "http://localhost:8000"
     app_title: str = "AI Council"
@@ -56,7 +56,7 @@ def load_settings() -> Settings:
     """
     return Settings(
         openrouter_api_key=os.getenv("OPENROUTER_API_KEY", "").strip(),
-        max_concurrency=max(1, _int_env("OPENROUTER_MAX_CONCURRENCY", 3)),
+        max_concurrency=max(1, _int_env("OPENROUTER_MAX_CONCURRENCY", 2)),
         timeout=_float_env("OPENROUTER_TIMEOUT", 90.0),
         app_url=os.getenv("OPENROUTER_APP_URL", "http://localhost:8000").strip(),
         app_title=os.getenv("OPENROUTER_APP_TITLE", "AI Council").strip(),
