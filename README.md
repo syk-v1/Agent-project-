@@ -12,7 +12,7 @@ all in a live web interface themed as an Athenian agora.
 [![Python](https://img.shields.io/badge/Python-3.10%2B-2F6E66.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-async%20%2B%20SSE-2F6E66.svg)](https://fastapi.tiangolo.com/)
 [![Models](https://img.shields.io/badge/models-free%20via%20OpenRouter-9C7A33.svg)](https://openrouter.ai/)
-[![Tests](https://img.shields.io/badge/tests-passing-3E7C74.svg)](tests/)
+[![Tests](https://github.com/syk-v1/Agent-project-/actions/workflows/ci.yml/badge.svg)](https://github.com/syk-v1/Agent-project-/actions/workflows/ci.yml)
 [![Build](https://img.shields.io/badge/frontend-no%20build%20step-555.svg)](static/)
 
 <img src="docs/hero.png" alt="The AI Council — Athenian agora interface" width="860">
@@ -95,7 +95,6 @@ You need **Python 3.10+** and a free OpenRouter API key (sign-up is free at
 ```powershell
 git clone https://github.com/syk-v1/Agent-project-.git
 cd Agent-project-
-git checkout claude/ai-council-interface-pvm2z1
 python -m pip install -r requirements.txt
 Copy-Item .env.example .env
 notepad .env      # paste your key after OPENROUTER_API_KEY=
@@ -110,7 +109,6 @@ python -m uvicorn app.main:app --reload
 ```bash
 git clone https://github.com/syk-v1/Agent-project-.git
 cd Agent-project-
-git checkout claude/ai-council-interface-pvm2z1
 python3 -m pip install -r requirements.txt
 cp .env.example .env
 $EDITOR .env      # paste your key after OPENROUTER_API_KEY=
